@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+housing.csv
+model.pkl
+pipeline.pkl
+.env
+input.csv
+venv/

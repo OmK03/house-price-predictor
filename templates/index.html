@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏠 House Price Predictor</h1>
+            <p>Fill in the details below to get an estimated house price</p>
+        </div>
+
+        <form action="/predict" method="POST" class="form">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Longitude</label>
+                    <input type="number" step="any" name="longitude" placeholder="-122.23" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Latitude</label>
+                    <input type="number" step="any" name="latitude" placeholder="37.88" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Housing Median Age</label>
+                    <input type="number" step="any" name="housing_median_age" placeholder="41" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Total Rooms</label>
+                    <input type="number" step="any" name="total_rooms" placeholder="880" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Total Bedrooms</label>
+                    <input type="number" step="any" name="total_bedrooms" placeholder="129" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Population</label>
+                    <input type="number" step="any" name="population" placeholder="322" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Households</label>
+                    <input type="number" step="any" name="households" placeholder="126" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Median Income (in tens of thousands)</label>
+                    <input type="number" step="any" name="median_income" placeholder="8.32" required>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Ocean Proximity</label>
+                    <select name="ocean_proximity" required>
+                        <option value="" disabled selected>Select ocean proximity</option>
+                        <option value="<1H OCEAN">&lt;1H OCEAN</option>
+                        <option value="INLAND">INLAND</option>
+                        <option value="ISLAND">ISLAND</option>
+                        <option value="NEAR BAY">NEAR BAY</option>
+                        <option value="NEAR OCEAN">NEAR OCEAN</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <button type="submit" class="btn">Predict Price</button>
+
+        </form>
+    </div>
+</body>
+</html>
