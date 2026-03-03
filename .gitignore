@@ -1,8 +1,7 @@
-__pycache__/
-*.pyc
-housing.csv
 model.pkl
 pipeline.pkl
-.env
 input.csv
-venv/
+output.csv
+__pycache__/
+*.pyc
+.env
