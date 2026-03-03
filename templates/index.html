@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>House Price Predictor</title>
+    <title>E-State IQ</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
@@ -15,7 +15,7 @@
         <header class="site-header">
             <div class="logo">
                 <span class="logo-icon">⌂</span>
-                <span class="logo-text">EstateIQ</span>
+                <span class="logo-text">E-State IQ</span>
             </div>
             <div class="header-tag">California Housing Market</div>
         </header>
@@ -24,7 +24,7 @@
             <div class="hero">
                 <p class="hero-eyebrow">AI-Powered Valuation</p>
                 <h1 class="hero-title">What's Your Home<br><em>Worth?</em></h1>
-                <p class="hero-subtitle">Select a city and enter property details to get an instant price estimate powered by machine learning.</p>
+                <p class="hero-subtitle">Select a city and enter your house details to get an instant price estimate powered by machine learning.</p>
             </div>
 
             <div class="map-card">
@@ -57,33 +57,22 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label>Housing Median Age <span class="hint">1 – 52 years</span></label>
-                            <input type="number" step="any" name="housing_median_age" placeholder="e.g. 25" min="1" max="52" required>
+                            <input type="number" step="any" name="housing_median_age" placeholder="How old are the houses in the area?" min="1" max="52" required>
                         </div>
                         <div class="form-group">
-                            <label>Total Rooms</label>
-                            <input type="number" step="any" name="total_rooms" placeholder="e.g. 880" min="1" required>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Total Bedrooms</label>
-                            <input type="number" step="any" name="total_bedrooms" placeholder="e.g. 129" min="1" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Population</label>
-                            <input type="number" step="any" name="population" placeholder="e.g. 322" min="1" required>
+                            <label>Median Income of Area <span class="hint">in tens of thousands</span></label>
+                            <input type="number" step="any" name="median_income" placeholder="e.g. enter 3.5 for $35,000 avg income" min="0.49" max="15.0" required>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Households</label>
-                            <input type="number" step="any" name="households" placeholder="e.g. 126" min="1" required>
+                            <label>Rooms in Your House</label>
+                            <input type="number" step="1" name="rooms_in_house" placeholder="Total rooms in your house (e.g. 5)" min="1" max="20" required>
                         </div>
                         <div class="form-group">
-                            <label>Median Income <span class="hint">in tens of thousands</span></label>
-                            <input type="number" step="any" name="median_income" placeholder="e.g. 3.87" min="0.49" max="15.0" required>
+                            <label>Bedrooms in Your House</label>
+                            <input type="number" step="1" name="bedrooms_in_house" placeholder="Number of bedrooms in your house (e.g. 2)" min="1" max="10" required>
                         </div>
                     </div>
 
@@ -113,8 +102,8 @@
         });
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap &copy; CARTO',
-        maxZoom: 19
+            attribution: '&copy; OpenStreetMap &copy; CARTO',
+            maxZoom: 19
         }).addTo(map);
 
         const goldIcon = L.divIcon({
@@ -145,5 +134,6 @@
             }
         });
     </script>
+    <script src="{{ url_for('static', filename='js/intro.js') }}"></script>
 </body>
 </html>

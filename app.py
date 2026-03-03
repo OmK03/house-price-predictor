@@ -75,7 +75,9 @@ CITY_DATA = {
     "El Centro":        {"longitude": -115.56, "latitude": 32.79, "ocean_proximity": "INLAND"},
 }
 
-RMSE = 50615
+MEDIAN_HOUSEHOLDS  = 499
+MEDIAN_POPULATION  = 1425
+RMSE               = 50615
 
 @app.route("/")
 def home():
@@ -89,15 +91,29 @@ def predict():
         return render_template("result.html", prediction="Model not loaded. Run main.py first.", city="", low="", high="", summary={})
 
     try:
-        city = request.form["city"]
-        city_info = CITY_DATA[city]
+        city                = request.form["city"]
+        city_info           = CITY_DATA[city]
+        housing_median_age  = float(request.form["housing_median_age"])
+        rooms_in_house      = float(request.form["rooms_in_house"])
+        bedrooms_in_house   = float(request.form["bedrooms_in_house"])
+        median_income       = float(request.form["median_income"])
 
-        housing_median_age = float(request.form["housing_median_age"])
-        total_rooms        = float(request.form["total_rooms"])
-        total_bedrooms     = float(request.form["total_bedrooms"])
-        population         = float(request.form["population"])
-        households         = float(request.form["households"])
-        median_income      = float(request.form["median_income"])
+        if bedrooms_in_house > rooms_in_house:
+            return render_template("result.html", prediction="Error: Bedrooms cannot exceed total rooms.", city=city, low="", high="", summary={})
+
+        if rooms_in_house < 1 or bedrooms_in_house < 1:
+            return render_template("result.html", prediction="Error: Rooms and bedrooms must be at least 1.", city=city, low="", high="", summary={})
+
+        if rooms_in_house > 20:
+            return render_template("result.html", prediction="Error: Total rooms in a house cannot exceed 20.", city=city, low="", high="", summary={})
+
+        if bedrooms_in_house > 10:
+            return render_template("result.html", prediction="Error: Bedrooms in a house cannot exceed 10.", city=city, low="", high="", summary={})
+
+        total_rooms     = rooms_in_house * MEDIAN_HOUSEHOLDS
+        total_bedrooms  = bedrooms_in_house * MEDIAN_HOUSEHOLDS
+        population      = MEDIAN_POPULATION
+        households      = MEDIAN_HOUSEHOLDS
 
         input_data = pd.DataFrame([{
             "longitude":          city_info["longitude"],
@@ -111,12 +127,6 @@ def predict():
             "ocean_proximity":    city_info["ocean_proximity"]
         }])
 
-        if total_bedrooms > total_rooms:
-            return render_template("result.html", prediction="Error: Total bedrooms cannot exceed total rooms.", city=city, low="", high="", summary={})
-
-        if households <= 0 or total_rooms <= 0:
-            return render_template("result.html", prediction="Error: Households and total rooms must be greater than 0.", city=city, low="", high="", summary={})
-
         transformed = pipeline.transform(input_data)
         prediction  = model.predict(transformed)[0]
 
@@ -127,14 +137,12 @@ def predict():
         high   = f"${high:,.0f}"
 
         summary = {
-            "City":                city,
-            "Housing Median Age":  f"{int(housing_median_age)} years",
-            "Total Rooms":         int(total_rooms),
-            "Total Bedrooms":      int(total_bedrooms),
-            "Population":          int(population),
-            "Households":          int(households),
-            "Median Income":       f"${median_income * 10000:,.0f}",
-            "Ocean Proximity":     city_info["ocean_proximity"],
+            "City":               city,
+            "House Age":          f"{int(housing_median_age)} years",
+            "Rooms in House":     int(rooms_in_house),
+            "Bedrooms in House":  int(bedrooms_in_house),
+            "Median Income":      f"${median_income * 10000:,.0f}",
+            "Ocean Proximity":    city_info["ocean_proximity"],
         }
 
         return render_template("result.html", prediction=result, city=city, low=low, high=high, summary=summary)
