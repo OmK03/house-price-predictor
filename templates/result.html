@@ -21,15 +21,47 @@
 
         <main class="main-content result-main">
             <div class="result-card">
+
                 <p class="result-eyebrow">Estimated Market Value</p>
                 <div class="result-city">{{ city }}</div>
                 <div class="result-price">{{ prediction }}</div>
-                <p class="result-note">Based on the property details you provided, our model estimates the median house value for this area.</p>
+
+                {% if low and high %}
+                <div class="confidence-block">
+                    <div class="confidence-label">Confidence Range</div>
+                    <div class="confidence-bar-wrapper">
+                        <span class="range-val">{{ low }}</span>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill"></div>
+                            <div class="confidence-dot"></div>
+                        </div>
+                        <span class="range-val">{{ high }}</span>
+                    </div>
+                    <p class="confidence-note">Based on model RMSE of ~$50,000</p>
+                </div>
+                {% endif %}
+
+                {% if summary %}
+                <div class="result-divider"></div>
+                <div class="summary-block">
+                    <div class="summary-title">Property Summary</div>
+                    <div class="summary-grid">
+                        {% for key, value in summary.items() %}
+                        <div class="summary-item">
+                            <span class="summary-key">{{ key }}</span>
+                            <span class="summary-val">{{ value }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
                 <div class="result-divider"></div>
                 <a href="/" class="btn-predict">
                     <span>New Valuation</span>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
+
             </div>
         </main>
 

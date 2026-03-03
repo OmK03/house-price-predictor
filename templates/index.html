@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EstateIQ - AI-Powered Home Valuation</title>
+    <title>House Price Predictor</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 </head>
 <body>
     <div class="bg-grid"></div>
@@ -14,7 +15,7 @@
         <header class="site-header">
             <div class="logo">
                 <span class="logo-icon">⌂</span>
-                <span class="logo-text">Estate IQ</span>
+                <span class="logo-text">EstateIQ</span>
             </div>
             <div class="header-tag">California Housing Market</div>
         </header>
@@ -23,7 +24,15 @@
             <div class="hero">
                 <p class="hero-eyebrow">AI-Powered Valuation</p>
                 <h1 class="hero-title">What's Your Home<br><em>Worth?</em></h1>
-                <p class="hero-subtitle">Enter your property details and get an instant price estimate powered by machine learning.</p>
+                <p class="hero-subtitle">Select a city and enter property details to get an instant price estimate powered by machine learning.</p>
+            </div>
+
+            <div class="map-card">
+                <div class="map-label">
+                    <span class="map-label-dot"></span>
+                    Select a city to locate it on the map
+                </div>
+                <div id="map"></div>
             </div>
 
             <div class="card">
@@ -33,7 +42,7 @@
                     <div class="form-row single">
                         <div class="form-group">
                             <label>City</label>
-                            <select name="city" required>
+                            <select name="city" id="city-select" required>
                                 <option value="" disabled selected>Select a California city</option>
                                 {% for city in cities %}
                                 <option value="{{ city }}">{{ city }}</option>
@@ -91,5 +100,50 @@
             <p>Built with Random Forest · California Housing Dataset · For educational purposes only</p>
         </footer>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script>
+        const cityCoords = {{ city_coords | tojson }};
+
+        const map = L.map('map', {
+            center: [37.5, -119.5],
+            zoom: 6,
+            zoomControl: true,
+            scrollWheelZoom: false
+        });
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+        maxZoom: 19
+        }).addTo(map);
+
+        const goldIcon = L.divIcon({
+            className: '',
+            html: `<div style="
+                width: 14px; height: 14px;
+                background: #c9a84c;
+                border: 2px solid #fff;
+                border-radius: 50%;
+                box-shadow: 0 0 10px rgba(201,168,76,0.8);
+            "></div>`,
+            iconSize: [14, 14],
+            iconAnchor: [7, 7]
+        });
+
+        let currentMarker = null;
+
+        document.getElementById('city-select').addEventListener('change', function() {
+            const city = this.value;
+            if (cityCoords[city]) {
+                const { lat, lng } = cityCoords[city];
+                if (currentMarker) map.removeLayer(currentMarker);
+                currentMarker = L.marker([lat, lng], { icon: goldIcon })
+                    .addTo(map)
+                    .bindPopup(`<b style="color:#c9a84c">${city}</b><br><small>${lat}, ${lng}</small>`)
+                    .openPopup();
+                map.flyTo([lat, lng], 9, { duration: 1.2 });
+            }
+        });
+    </script>
 </body>
 </html>

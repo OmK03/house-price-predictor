@@ -75,47 +75,74 @@ CITY_DATA = {
     "El Centro":        {"longitude": -115.56, "latitude": 32.79, "ocean_proximity": "INLAND"},
 }
 
+RMSE = 50615
+
 @app.route("/")
 def home():
     cities = sorted(CITY_DATA.keys())
-    return render_template("index.html", cities=cities)
+    city_coords = {city: {"lat": data["latitude"], "lng": data["longitude"]} for city, data in CITY_DATA.items()}
+    return render_template("index.html", cities=cities, city_coords=city_coords)
 
 @app.route("/predict", methods=["POST"])
 def predict():
     if model is None or pipeline is None:
-        return render_template("result.html", prediction="Model not loaded. Run main.py first.", city="")
+        return render_template("result.html", prediction="Model not loaded. Run main.py first.", city="", low="", high="", summary={})
 
     try:
         city = request.form["city"]
         city_info = CITY_DATA[city]
 
+        housing_median_age = float(request.form["housing_median_age"])
+        total_rooms        = float(request.form["total_rooms"])
+        total_bedrooms     = float(request.form["total_bedrooms"])
+        population         = float(request.form["population"])
+        households         = float(request.form["households"])
+        median_income      = float(request.form["median_income"])
+
         input_data = pd.DataFrame([{
             "longitude":          city_info["longitude"],
             "latitude":           city_info["latitude"],
-            "housing_median_age": float(request.form["housing_median_age"]),
-            "total_rooms":        float(request.form["total_rooms"]),
-            "total_bedrooms":     float(request.form["total_bedrooms"]),
-            "population":         float(request.form["population"]),
-            "households":         float(request.form["households"]),
-            "median_income":      float(request.form["median_income"]),
+            "housing_median_age": housing_median_age,
+            "total_rooms":        total_rooms,
+            "total_bedrooms":     total_bedrooms,
+            "population":         population,
+            "households":         households,
+            "median_income":      median_income,
             "ocean_proximity":    city_info["ocean_proximity"]
         }])
 
-        if input_data["total_bedrooms"][0] > input_data["total_rooms"][0]:
-            return render_template("result.html", prediction="Error: Total bedrooms cannot exceed total rooms.", city=city)
+        if total_bedrooms > total_rooms:
+            return render_template("result.html", prediction="Error: Total bedrooms cannot exceed total rooms.", city=city, low="", high="", summary={})
 
-        if input_data["households"][0] <= 0 or input_data["total_rooms"][0] <= 0:
-            return render_template("result.html", prediction="Error: Households and total rooms must be greater than 0.", city=city)
+        if households <= 0 or total_rooms <= 0:
+            return render_template("result.html", prediction="Error: Households and total rooms must be greater than 0.", city=city, low="", high="", summary={})
 
         transformed = pipeline.transform(input_data)
-        prediction = model.predict(transformed)[0]
-        result = f"${prediction:,.2f}"
-        return render_template("result.html", prediction=result, city=city)
+        prediction  = model.predict(transformed)[0]
+
+        low    = max(0, prediction - RMSE)
+        high   = prediction + RMSE
+        result = f"${prediction:,.0f}"
+        low    = f"${low:,.0f}"
+        high   = f"${high:,.0f}"
+
+        summary = {
+            "City":                city,
+            "Housing Median Age":  f"{int(housing_median_age)} years",
+            "Total Rooms":         int(total_rooms),
+            "Total Bedrooms":      int(total_bedrooms),
+            "Population":          int(population),
+            "Households":          int(households),
+            "Median Income":       f"${median_income * 10000:,.0f}",
+            "Ocean Proximity":     city_info["ocean_proximity"],
+        }
+
+        return render_template("result.html", prediction=result, city=city, low=low, high=high, summary=summary)
 
     except ValueError:
-        return render_template("result.html", prediction="Error: Please enter valid numeric values.", city="")
+        return render_template("result.html", prediction="Error: Please enter valid numeric values.", city="", low="", high="", summary={})
     except Exception as e:
-        return render_template("result.html", prediction=f"Unexpected error: {str(e)}", city="")
+        return render_template("result.html", prediction=f"Unexpected error: {str(e)}", city="", low="", high="", summary={})
 
 if __name__ == "__main__":
     app.run(debug=True)
