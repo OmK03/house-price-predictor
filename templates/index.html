@@ -3,77 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>House Price Predictor</title>
+    <title>EstateIQ - AI-Powered Home Valuation</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🏠 House Price Predictor</h1>
-            <p>Fill in the details below to get an estimated house price</p>
-        </div>
+    <div class="bg-grid"></div>
 
-        <form action="/predict" method="POST" class="form">
+    <div class="page-wrapper">
+        <header class="site-header">
+            <div class="logo">
+                <span class="logo-icon">⌂</span>
+                <span class="logo-text">Estate IQ</span>
+            </div>
+            <div class="header-tag">California Housing Market</div>
+        </header>
 
-            <div class="form-grid">
-
-                <div class="form-group">
-                    <label>Longitude</label>
-                    <input type="number" step="any" name="longitude" placeholder="-122.23" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Latitude</label>
-                    <input type="number" step="any" name="latitude" placeholder="37.88" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Housing Median Age</label>
-                    <input type="number" step="any" name="housing_median_age" placeholder="41" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Total Rooms</label>
-                    <input type="number" step="any" name="total_rooms" placeholder="880" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Total Bedrooms</label>
-                    <input type="number" step="any" name="total_bedrooms" placeholder="129" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Population</label>
-                    <input type="number" step="any" name="population" placeholder="322" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Households</label>
-                    <input type="number" step="any" name="households" placeholder="126" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Median Income (in tens of thousands)</label>
-                    <input type="number" step="any" name="median_income" placeholder="8.32" required>
-                </div>
-
-                <div class="form-group full-width">
-                    <label>Ocean Proximity</label>
-                    <select name="ocean_proximity" required>
-                        <option value="" disabled selected>Select ocean proximity</option>
-                        <option value="<1H OCEAN">&lt;1H OCEAN</option>
-                        <option value="INLAND">INLAND</option>
-                        <option value="ISLAND">ISLAND</option>
-                        <option value="NEAR BAY">NEAR BAY</option>
-                        <option value="NEAR OCEAN">NEAR OCEAN</option>
-                    </select>
-                </div>
-
+        <main class="main-content">
+            <div class="hero">
+                <p class="hero-eyebrow">AI-Powered Valuation</p>
+                <h1 class="hero-title">What's Your Home<br><em>Worth?</em></h1>
+                <p class="hero-subtitle">Enter your property details and get an instant price estimate powered by machine learning.</p>
             </div>
 
-            <button type="submit" class="btn">Predict Price</button>
+            <div class="card">
+                <form action="/predict" method="POST">
 
-        </form>
+                    <div class="section-label">Location</div>
+                    <div class="form-row single">
+                        <div class="form-group">
+                            <label>City</label>
+                            <select name="city" required>
+                                <option value="" disabled selected>Select a California city</option>
+                                {% for city in cities %}
+                                <option value="{{ city }}">{{ city }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="section-label">Property Details</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Housing Median Age <span class="hint">1 – 52 years</span></label>
+                            <input type="number" step="any" name="housing_median_age" placeholder="e.g. 25" min="1" max="52" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Total Rooms</label>
+                            <input type="number" step="any" name="total_rooms" placeholder="e.g. 880" min="1" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Total Bedrooms</label>
+                            <input type="number" step="any" name="total_bedrooms" placeholder="e.g. 129" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Population</label>
+                            <input type="number" step="any" name="population" placeholder="e.g. 322" min="1" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Households</label>
+                            <input type="number" step="any" name="households" placeholder="e.g. 126" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Median Income <span class="hint">in tens of thousands</span></label>
+                            <input type="number" step="any" name="median_income" placeholder="e.g. 3.87" min="0.49" max="15.0" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-predict">
+                        <span>Get Valuation</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+
+                </form>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <p>Built with Random Forest · California Housing Dataset · For educational purposes only</p>
+        </footer>
     </div>
 </body>
 </html>

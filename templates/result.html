@@ -3,20 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prediction Result</title>
+    <title>Valuation Result</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🏠 House Price Predictor</h1>
-        </div>
+    <div class="bg-grid"></div>
 
-        <div class="result-card">
-            <p class="result-label">Estimated House Price</p>
-            <h2 class="result-value">{{ prediction }}</h2>
-            <a href="/" class="btn">Predict Another</a>
-        </div>
+    <div class="page-wrapper">
+        <header class="site-header">
+            <div class="logo">
+                <span class="logo-icon">⌂</span>
+                <span class="logo-text">EstateIQ</span>
+            </div>
+            <div class="header-tag">California Housing Market</div>
+        </header>
+
+        <main class="main-content result-main">
+            <div class="result-card">
+                <p class="result-eyebrow">Estimated Market Value</p>
+                <div class="result-city">{{ city }}</div>
+                <div class="result-price">{{ prediction }}</div>
+                <p class="result-note">Based on the property details you provided, our model estimates the median house value for this area.</p>
+                <div class="result-divider"></div>
+                <a href="/" class="btn-predict">
+                    <span>New Valuation</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <p>Built with Random Forest · California Housing Dataset · For educational purposes only</p>
+        </footer>
     </div>
 </body>
 </html>
